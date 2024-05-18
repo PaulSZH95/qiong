@@ -1,0 +1,9 @@
+tickers_url: 'https://www.sec.gov/files/company_tickers.json'
+cik_filler: 10
+base_url: 'https://data.sec.gov/submissions/'
+base_url_extension: 'json'
+browser_agent: 'demo demo@example.example'
+Accept-Encoding:
+  - gzip
+  - deflate
+host: 'www.sec.gov'
