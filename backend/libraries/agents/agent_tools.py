@@ -57,7 +57,9 @@ def edgar_report(
             return f"{form} filing for {ticker} in {year} and quarter {quarter} is now ready for use."
         else:
             return f"{form} filing for {ticker} in {year} and quarter {quarter} is unavailable for use due to {response}"
-    except:
+    except Exception as e:
+        print(e)
+        print()
         return f"{form} filing for {ticker} in {year} and quarter {quarter} is unavailable."
 
 
@@ -86,6 +88,8 @@ def raq_qa_hybrid(query_prompt):
         combined_text += referenced_text
         return combined_text
     except Exception as e:
+        print(e)
+        print()
         return f"tool raq_qa_rerank ran into error, you should try using other tools.\nError: {e}"
 
 
@@ -120,6 +124,8 @@ def raq_qa_rerank(query_prompt, rerank_query):
         combined_text += referenced_text
         return combined_text
     except Exception as e:
+        print(e)
+        print()
         return f"tool raq_qa_rerank ran into error, you should try using other tools.\nError: {e}"
 
 
