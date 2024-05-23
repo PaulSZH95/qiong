@@ -22,6 +22,8 @@ class TypeConvert:
     ):
         if not type_conv_api:
             convertapi.api_secret = os.getenv("convertapi_secret")
+        else:
+            convertapi.api_secret = type_conv_api
         status = convertapi.convert(
             "pdf", {"File": htm_file_path}, from_format=form_format
         ).save_files(save_to)

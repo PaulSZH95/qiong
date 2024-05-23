@@ -49,7 +49,7 @@ def edgar_report(
         with open(dump_to, "w", encoding="UTF-8") as f:
             f.write(doc_xml)
         file_path = TypeConvert.convert_htm_pdf(
-            htm_file_path="sample.htm", save_to=save_to
+            htm_file_path=join(backend_dir, "data/sample.htm"), save_to=save_to
         )[0]
 
         response = DocumentProcess.create_rag(file_path)
