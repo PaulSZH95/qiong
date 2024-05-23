@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  fastapi_custom_1:
+    image: fastapi_custom_1
+    build:
+      context: .
+      dockerfile: ./backend/dockerfiles/fastapi_app.yaml
+    ports:
+      - "8000:8000"
+    networks:
+      - cust_conn
+    restart: unless-stopped
+
+  gradio_custom_1:
+    image: gradio_custom_1
+    build:
+      context: .
+      dockerfile: ./interface/gradio_app.yaml
+    ports:
+      - "7860:7860"
+    networks:
+      - cust_conn
+    restart: unless-stopped
+
+  weaviate_custom_1:
+    image: weaviate_custom_1
+    build:
+      context: .
+      dockerfile: ./backend/dockerfiles/weaviate.yaml
+    volumes:
+      - ${abspath}/weaviate_data:/var/weaviate
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    networks:
+      - cust_conn
+    restart: unless-stopped
+
+networks:
+  cust_conn:
+    driver: bridge
