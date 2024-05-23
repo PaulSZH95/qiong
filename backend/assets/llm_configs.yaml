@@ -1,0 +1,3 @@
+models:
+  groq_llama: 'llama3-70b-8192'
+  groq_mixtral: 'mixtral-8x7b-32768'
