@@ -17,7 +17,7 @@ load_dotenv(dotenv_path=secrets_path)
 
 class RagFilter:
 
-    def __init__(self, host: str = "localhost", port=8080):
+    def __init__(self, host: str = "weaviate_custom_1", port=8080):
         self.client = weaviate.connect_to_local(
             headers={"X-COHERE-Api-Key": os.getenv("cohere_api")}, host=host, port=port
         )
