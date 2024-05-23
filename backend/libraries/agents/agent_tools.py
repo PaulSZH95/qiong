@@ -67,23 +67,26 @@ def raq_qa_hybrid(query_prompt):
     This RAG tool is used when user naively request for information in our database
     :query_prompt: str - required user's query
     """
-    w_rag = RagWOFilter()
-    w_rag.activate_collection()
-    results = w_rag.rag_qa_hybrid(query_prompt=query_prompt)
-    filtered_results = RagUtils.mean_score_filter(results)
-    w_rag.close()
-    combined_text = (
-        f"These are the relevant context for #Query of \n{query_prompt}:\n\n"
-    )
-    referenced_text = "References: "
-    for idx, r in enumerate(filtered_results):
-        combined_text += f"{idx} and confidence score of {r.metadata.score}:\n{r.properties['content']}\n"
-        if r.properties["type"] == "text":
-            referenced_text += f"text from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
-        else:
-            referenced_text += f"table from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
-    combined_text += referenced_text
-    return combined_text
+    try:
+        w_rag = RagWOFilter()
+        w_rag.activate_collection()
+        results = w_rag.rag_qa_hybrid(query_prompt=query_prompt)
+        filtered_results = RagUtils.mean_score_filter(results)
+        w_rag.close()
+        combined_text = (
+            f"These are the relevant context for #Query of \n{query_prompt}:\n\n"
+        )
+        referenced_text = "References: "
+        for idx, r in enumerate(filtered_results):
+            combined_text += f"{idx} and confidence score of {r.metadata.score}:\n{r.properties['content']}\n"
+            if r.properties["type"] == "text":
+                referenced_text += f"text from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
+            else:
+                referenced_text += f"table from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
+        combined_text += referenced_text
+        return combined_text
+    except Exception as e:
+        return f"tool raq_qa_rerank ran into error, you should try using other tools.\nError: {e}"
 
 
 @tool
@@ -94,27 +97,30 @@ def raq_qa_rerank(query_prompt, rerank_query):
     :query_prompt: str - required user's query
     :rerank_query: str - required a condensed version of query_prompt
     """
-    w_rag = RagWOFilter()
-    rerank_kwargs = {"prop": "content", "query": rerank_query}
-    w_rag.activate_collection()
-    results = w_rag.rag_qa_complex(
-        query_prompt=query_prompt,
-        rerank_kwargs=rerank_kwargs,
-    )
-    filtered_results = RagUtils.mean_rerank_filter(results)
-    w_rag.close()
-    combined_text = (
-        f"These are the relevant context for #Query of \n{query_prompt}:\n\n"
-    )
-    referenced_text = "References: "
-    for idx, r in enumerate(filtered_results):
-        combined_text += f"{idx} and confidence score of {r.metadata.certainty}:\n{r.properties['content']}\n"
-        if r.properties["type"] == "text":
-            referenced_text += f"text from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
-        else:
-            referenced_text += f"table from page {r.properties['page']} and section number of {r.properties['section_number']} which is a table. You must include in your answer a warning that tables are not often accurate and users are to verify the numbers again.\n"
-    combined_text += referenced_text
-    return combined_text
+    try:
+        w_rag = RagWOFilter()
+        rerank_kwargs = {"prop": "content", "query": rerank_query}
+        w_rag.activate_collection()
+        results = w_rag.rag_qa_complex(
+            query_prompt=query_prompt,
+            rerank_kwargs=rerank_kwargs,
+        )
+        filtered_results = RagUtils.mean_rerank_filter(results)
+        w_rag.close()
+        combined_text = (
+            f"These are the relevant context for #Query of \n{query_prompt}:\n\n"
+        )
+        referenced_text = "References: "
+        for idx, r in enumerate(filtered_results):
+            combined_text += f"{idx} and confidence score of {r.metadata.certainty}:\n{r.properties['content']}\n"
+            if r.properties["type"] == "text":
+                referenced_text += f"text from page {r.properties['page']} and section number of {r.properties['section_number']}.\n"
+            else:
+                referenced_text += f"table from page {r.properties['page']} and section number of {r.properties['section_number']} which is a table. You must include in your answer a warning that tables are not often accurate and users are to verify the numbers again.\n"
+        combined_text += referenced_text
+        return combined_text
+    except Exception as e:
+        return f"tool raq_qa_rerank ran into error, you should try using other tools.\nError: {e}"
 
 
 nvidia = Edgar("NVDA", up_till_date_ago=datetime.strptime("2020-01-01", "%Y-%m-%d"))
