@@ -49,7 +49,7 @@ def edgar_report(
         with open(dump_to, "w", encoding="UTF-8") as f:
             f.write(doc_xml)
         file_path = TypeConvert.convert_htm_pdf(
-            htm_file_path=join(backend_dir, "data/sample.htm"), save_to=save_to
+            htm_file_path=join(backend_dir, "data/something.htm"), save_to=save_to
         )[0]
 
         response = DocumentProcess.create_rag(file_path)
@@ -128,7 +128,5 @@ def raq_qa_rerank(query_prompt, rerank_query):
         print()
         return f"tool raq_qa_rerank ran into error, you should try using other tools.\nError: {e}"
 
-
-nvidia = Edgar("NVDA", up_till_date_ago=datetime.strptime("2020-01-01", "%Y-%m-%d"))
 
 __all__ = ["raq_qa_rerank", "raq_qa_hybrid", "edgar_report"]
