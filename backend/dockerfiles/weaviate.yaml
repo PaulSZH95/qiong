@@ -1,0 +1,24 @@
+FROM cr.weaviate.io/semitechnologies/weaviate:1.25.1
+
+# Set environment variables
+ENV QUERY_DEFAULTS_LIMIT=20
+ENV AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+ENV PERSISTENCE_DATA_PATH=/var/lib/weaviate
+ENV ENABLE_MODULES=text2vec-cohere,reranker-cohere
+ENV DEFAULT_VECTORIZER_MODULE=text2vec-cohere
+ENV COHERE_APIKEY=${COHERE_APIKEY}
+ENV CLUSTER_HOSTNAME=node1
+
+# Create a non-root user
+RUN addgroup --system user1 && adduser --system --ingroup user1 user1
+RUN mkdir -p /var/lib/weaviate && chown -R user1:user1 /var/lib/weaviate
+
+# Switch to the user1 user
+USER user1
+VOLUME /var/lib/weaviate
+
+# Expose ports
+EXPOSE 8080 50051
+
+# Start the service (this command might vary depending on the actual startup script for Weaviate)
+CMD ["weaviate", "--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]

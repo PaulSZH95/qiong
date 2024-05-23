@@ -1,0 +1,11 @@
+**/__pycache__
+**/*test*
+**/config
+# extensions
+**/*ipynb
+**/*txt
+**/*htm
+**/*html
+**/*pdf
+**/weaviate
+**/data
