@@ -41,42 +41,35 @@ class Message(BaseModel):
 
 @app.get("/chat_point")
 async def root(message: Message):
+    response = agent.invoke(
+        {"input": message.message},
+        config={"configurable": {"session_id": current_id}},
+    )
+    output = response["output"]
+    print(output)
     try:
-        response = agent.invoke(
-            {"input": message.message},
-            config={"configurable": {"session_id": current_id}},
-        )
-        output = response["output"]
-        print(output)
-        try:
-            if len(response["intermediate_steps"]):
-                if response["intermediate_steps"][-1][0].tool != "edgar_report":
-                    ref = response["intermediate_steps"][-1][1].rsplit(": ")[-1]
-                    output += "\n" + f"references:\n{ref}"
-        except:
-            pass
-    except Exception as:
-        return {"response": output}
+        if len(response["intermediate_steps"]):
+            if response["intermediate_steps"][-1][0].tool != "edgar_report":
+                ref = response["intermediate_steps"][-1][1].rsplit(": ")[-1]
+                output += "\n" + f"references:\n{ref}"
+    except:
+        pass
     return {"response": output}
 
 
 @app.post("/fin_pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
-    try:
-        if file.content_type != "application/pdf":
-            return JSONResponse(content={"error": "File must be a PDF"}, status_code=400)
+    if file.content_type != "application/pdf":
+        return JSONResponse(content={"error": "File must be a PDF"}, status_code=400)
 
-        # Save the uploaded file
-        upload_directory = Path(script_dir)
-        upload_directory.mkdir(parents=True, exist_ok=True)
-        file_path = upload_path
+    # Save the uploaded file
+    upload_directory = Path(script_dir)
+    upload_directory.mkdir(parents=True, exist_ok=True)
+    file_path = upload_path
 
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
 
-        response = DocumentProcess.create_rag(upload_path)
+    response = DocumentProcess.create_rag(upload_path)
 
-        return {"rag_result": response}
-    except Exception as error:
-        return {"rag_result": error}
-
+    return {"rag_result": response}
